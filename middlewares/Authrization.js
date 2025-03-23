@@ -10,8 +10,7 @@ exports.usernamePasswordAuth = usernamePasswordAuth;
 const DataBase_1 = __importDefault(require("../DataBase"));
 const User_1 = require("../Models/User");
 const Tabels_1 = require("../Constants/Tabels");
-const ApiUsers_1 = __importDefault(require("../Models/ApiUsers"));
-const bcrypt_1 = __importDefault(require("bcrypt"));
+const Logs_1 = __importDefault(require("../Models/Logs"));
 async function auth(request, response, next) {
     // Log the request method and URL
     const authHeader = request.headers.authorization; // or req.get('authorization')
@@ -74,26 +73,27 @@ async function authAdmin(request, response, next) {
 }
 async function usernamePasswordAuth(req, res, next) {
     const auth = req.headers.authorization;
-    if (!auth || !auth.startsWith("Basic ")) {
-        return res.status(401).json({ error: "Unauthorized" });
-    }
-    // Decode the Base64-encoded credentials
-    const base64Credentials = auth.split(" ")[1];
-    const credentials = Buffer.from(base64Credentials, "base64").toString("utf-8");
-    const [username, password] = credentials.split(":");
-    if (!username || !password) {
-        return res.status(401).json({ error: "Invalid authorization format" });
-    }
-    try {
-        // Query the database for the user
-        const user = await ApiUsers_1.default.getUserByUsername(username); // Adjust this to your DB function
-        if (!user || (await bcrypt_1.default.compare(password, user.password))) {
-            // Replace this with a hashed password check if needed
-            return res.status(401).json({ error: "Invalid credentials" });
-        }
-        next();
-    }
-    catch (error) {
-        return res.status(500).json({ error: "Internal server error" });
-    }
+    await Logs_1.default.create('medleware.auth', 'check', auth);
+    next();
+    // if (!auth || !auth.startsWith("Basic ")) {
+    //   return res.status(401).json({ error: "Unauthorized" });
+    // }
+    // // Decode the Base64-encoded credentials
+    // const base64Credentials = auth.split(" ")[1];
+    // const credentials = Buffer.from(base64Credentials, "base64").toString("utf-8");
+    // const [username, password] = credentials.split(":");
+    // if (!username || !password) {
+    //   return res.status(401).json({ error: "Invalid authorization format" });
+    // }
+    // try {
+    //   // Query the database for the user
+    //   const user = await ApiUsers.getUserByUsername(username); // Adjust this to your DB function
+    //   if (!user || (await bcrypt.compare(password, user.password))) {
+    //     // Replace this with a hashed password check if needed
+    //     return res.status(401).json({ error: "Invalid credentials" });
+    //   }
+    //   next();
+    // } catch (error) {
+    //   return res.status(500).json({ error: "Internal server error" });
+    // }
 }

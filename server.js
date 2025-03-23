@@ -18,6 +18,7 @@ const AnalyticsController_1 = __importDefault(require("./Controller/AnalyticsCon
 const AnalyticsAdminController_1 = __importDefault(require("./Controller/AnalyticsAdminController"));
 const ApisUsersController_1 = __importDefault(require("./Controller/ApisUsersController"));
 const LoginController_1 = __importDefault(require("./Controller/LoginController"));
+const CategoriesController_1 = __importDefault(require("./Controller/CategoriesController"));
 const app = (0, express_1.default)();
 const server = http_1.default.createServer(app);
 const PORT = process.env.PORT || 3030;
@@ -39,6 +40,7 @@ app.use("/admin/user", UsersAdminController_1.default.getRouter());
 app.use("/", LoginController_1.default.getRouter());
 app.use("/api/analytics", AnalyticsController_1.default.getRouter());
 app.use("/admin/analytics", AnalyticsAdminController_1.default.getRouter());
+app.use("/admin/categories", CategoriesController_1.default.getRouter());
 app.use(express_1.default.static(node_path_1.default.join(__dirname, "build")));
 app.get("/*", function (req, res) {
     res.sendFile(node_path_1.default.join(__dirname, "build", "index.html"));

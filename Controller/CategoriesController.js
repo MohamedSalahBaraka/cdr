@@ -5,12 +5,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 // controllers/accountController.ts
 const express_1 = require("express");
-const Accounts_1 = __importDefault(require("../Models/Accounts"));
-class AccountsController {
+const Category_1 = __importDefault(require("../Models/Category"));
+class CategoriesController {
     static async create(req, res) {
         try {
-            const { code, category_id } = req.body;
-            const service = await Accounts_1.default.create(code, category_id);
+            const { name } = req.body;
+            const service = await Category_1.default.create(name);
             res.status(201).json(service);
         }
         catch (error) {
@@ -22,8 +22,8 @@ class AccountsController {
     static async update(req, res) {
         try {
             const id = req.params.id;
-            const { code, category_id } = req.body;
-            const account = await Accounts_1.default.update(id, code, category_id);
+            const { name } = req.body;
+            const account = await Category_1.default.update(id, name);
             res.status(201).json(account);
         }
         catch (error) {
@@ -33,8 +33,8 @@ class AccountsController {
     }
     static async get(req, res) {
         try {
-            const accounts = await Accounts_1.default.get();
-            res.json(accounts);
+            const category = await Category_1.default.get();
+            res.json(category);
         }
         catch (error) {
             console.error(error);
@@ -44,7 +44,7 @@ class AccountsController {
     static async delete(req, res) {
         try {
             const id = req.params.id;
-            await Accounts_1.default.delete(id);
+            await Category_1.default.delete(id);
             res.status(204).send(); // No content on successful deletion
         }
         catch (error) {
@@ -61,4 +61,4 @@ class AccountsController {
         return router;
     }
 }
-exports.default = AccountsController;
+exports.default = CategoriesController;
