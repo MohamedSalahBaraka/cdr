@@ -89,7 +89,7 @@ class UsersAdminController {
             const type = req.query.type;
             console.log("we here");
             // @ts-ignore
-            const users = await User_1.default.getusers(parseInt(p || "1"), type);
+            const users = await User_1.default.getusers(parseInt(p || "1"), parseInt(type || "1"));
             res.json(users);
         }
         catch (error) {
