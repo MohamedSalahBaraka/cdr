@@ -94,7 +94,8 @@ class UsersAdminController {
         }
         catch (error) {
             console.error(error);
-            res.status(500).send("Internal Server Error");
+            const e = error;
+            res.status(500).json({ error, msg: e.message });
         }
     }
     static async search(req, res) {

@@ -312,7 +312,7 @@ class Analytics {
                     data.failed_calls++;
                 }
                 // Track busiest hour
-                const hour = log.start.split("T")[1].split(":")[0]; // Extract hour (HH)
+                const hour = log.start.split(" ")[1].split(":")[0]; // Extract hour (HH)
                 data.busiest_hour_map[hour] = (data.busiest_hour_map[hour] || 0) + 1;
                 // Track most called number
                 data.most_called_map[log.dst] = (data.most_called_map[log.dst] || 0) + 1;
@@ -373,7 +373,7 @@ class Analytics {
                     data.failed_calls++;
                 }
                 // Track busiest hour
-                const hour = log.start.split("T")[1].split(":")[0]; // Extract hour (HH)
+                const hour = log.start.split(" ")[1].split(":")[0]; // Extract hour (HH)
                 data.busiest_hour_map[hour] = (data.busiest_hour_map[hour] || 0) + 1;
                 // Track most called number
                 data.most_called_map[log.dst] = (data.most_called_map[log.dst] || 0) + 1;
@@ -508,7 +508,7 @@ class Analytics {
                     data.failed_calls++;
                 }
                 // Track busiest hour
-                const hour = log.start.split("T")[1].split(":")[0]; // Extract hour (HH)
+                const hour = log.start.split(" ")[1].split(":")[0]; // Extract hour (HH)
                 data.busiest_hour_map[hour] = (data.busiest_hour_map[hour] || 0) + 1;
                 // Track most called number
                 data.most_called_map[log.dst] = (data.most_called_map[log.dst] || 0) + 1;
