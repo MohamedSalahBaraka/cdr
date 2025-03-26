@@ -246,9 +246,154 @@ class Analytics {
             throw error;
         }
     }
+    static async getAnalyticsByDateRangeAndAccountCode(startDate, endDate, accountcode) {
+        try {
+            const data = await DataBase_1.default.getAll(Tabels_1.CDR_ANALYTICS_TABLE, "*", "", "WHERE date >= ? AND date <= ? AND accountcode = ?", [
+                startDate,
+                endDate,
+                accountcode,
+            ]);
+            console.log(data);
+            return this.aggregateAnalyticsRecords(data);
+        }
+        catch (error) {
+            throw error;
+        }
+    }
+    static async getAnalyticsByDateRange(startDate, endDate) {
+        try {
+            const data = await DataBase_1.default.getAll(Tabels_1.CDR_ANALYTICS_TABLE, "*", "", "WHERE date >= ? AND date <= ?", [startDate, endDate]);
+            return this.aggregateAnalyticsRecords(data);
+        }
+        catch (error) {
+            throw error;
+        }
+    }
     /**
      * Get analytics for all account codes for all time.
      */
+    static async getTodayAnalytics() {
+        try {
+            // Get Today's date in YYYY-MM-DD format
+            const Today = new Date();
+            const formattedDate = Today.toISOString().split("T")[0];
+            // Fetch all call records from the CDR log table for Today
+            const logs = await DataBase_1.default.getAll(Tabels_1.CDR_LOGS_TABLE, "*", "", "WHERE DATE(start) = ?", [formattedDate]);
+            if (!logs || logs.length === 0)
+                return null;
+            // Aggregate data by accountcode
+            const analyticsData = {};
+            logs.forEach((log) => {
+                const key = log.accountcode;
+                if (!analyticsData[key]) {
+                    analyticsData[key] = {
+                        accountcode: log.accountcode,
+                        date: formattedDate,
+                        total_calls: 0,
+                        answered_calls: 0,
+                        missed_calls: 0,
+                        failed_calls: 0,
+                        total_duration: 0,
+                        busiest_hour_map: {},
+                        most_called_map: {},
+                        most_frequent_caller_map: {},
+                    };
+                }
+                const data = analyticsData[key];
+                data.total_calls++;
+                data.total_duration += parseInt(log.duration);
+                if (log.disposition === "ANSWERED") {
+                    data.answered_calls++;
+                }
+                else if (log.disposition === "NO ANSWER") {
+                    data.missed_calls++;
+                }
+                else if (log.disposition === "FAILED" || log.disposition === "BUSY") {
+                    data.failed_calls++;
+                }
+                // Track busiest hour
+                const hour = log.start.split("T")[1].split(":")[0]; // Extract hour (HH)
+                data.busiest_hour_map[hour] = (data.busiest_hour_map[hour] || 0) + 1;
+                // Track most called number
+                data.most_called_map[log.dst] = (data.most_called_map[log.dst] || 0) + 1;
+                // Track most frequent caller
+                data.most_frequent_caller_map[log.src] = (data.most_frequent_caller_map[log.src] || 0) + 1;
+            });
+            // Process aggregated data and insert using `create` method
+            for (const key in analyticsData) {
+                const entry = analyticsData[key];
+                entry.avg_duration = entry.answered_calls > 0 ? entry.total_duration / entry.answered_calls : 0;
+                entry.busiest_hour = Object.keys(entry.busiest_hour_map).reduce((a, b) => (entry.busiest_hour_map[a] > entry.busiest_hour_map[b] ? a : b), "00");
+                entry.most_called_number = Object.keys(entry.most_called_map).reduce((a, b) => (entry.most_called_map[a] > entry.most_called_map[b] ? a : b), "");
+                entry.most_frequent_caller = Object.keys(entry.most_frequent_caller_map).reduce((a, b) => (entry.most_frequent_caller_map[a] > entry.most_frequent_caller_map[b] ? a : b), "");
+                return entry;
+            }
+        }
+        catch (error) {
+            throw error;
+        }
+    }
+    static async getTodayAnalyticsByAccount(accountcode) {
+        try {
+            // Get Today's date in YYYY-MM-DD format
+            const Today = new Date();
+            const formattedDate = Today.toISOString().split("T")[0];
+            // Fetch all call records from the CDR log table for Today
+            const logs = await DataBase_1.default.getAll(Tabels_1.CDR_LOGS_TABLE, "*", "", "WHERE DATE(start) = ? AND accountcode = ?", [formattedDate, accountcode]);
+            if (!logs || logs.length === 0)
+                return null;
+            // Aggregate data by accountcode
+            const analyticsData = {};
+            logs.forEach((log) => {
+                const key = log.accountcode;
+                if (!analyticsData[key]) {
+                    analyticsData[key] = {
+                        accountcode: log.accountcode,
+                        date: formattedDate,
+                        total_calls: 0,
+                        answered_calls: 0,
+                        missed_calls: 0,
+                        failed_calls: 0,
+                        total_duration: 0,
+                        busiest_hour_map: {},
+                        most_called_map: {},
+                        most_frequent_caller_map: {},
+                    };
+                }
+                const data = analyticsData[key];
+                data.total_calls++;
+                data.total_duration += parseInt(log.duration);
+                if (log.disposition === "ANSWERED") {
+                    data.answered_calls++;
+                }
+                else if (log.disposition === "NO ANSWER") {
+                    data.missed_calls++;
+                }
+                else if (log.disposition === "FAILED" || log.disposition === "BUSY") {
+                    data.failed_calls++;
+                }
+                // Track busiest hour
+                const hour = log.start.split("T")[1].split(":")[0]; // Extract hour (HH)
+                data.busiest_hour_map[hour] = (data.busiest_hour_map[hour] || 0) + 1;
+                // Track most called number
+                data.most_called_map[log.dst] = (data.most_called_map[log.dst] || 0) + 1;
+                // Track most frequent caller
+                data.most_frequent_caller_map[log.src] = (data.most_frequent_caller_map[log.src] || 0) + 1;
+            });
+            // Process aggregated data and insert using `create` method
+            for (const key in analyticsData) {
+                const entry = analyticsData[key];
+                entry.avg_duration = entry.answered_calls > 0 ? entry.total_duration / entry.answered_calls : 0;
+                entry.busiest_hour = Object.keys(entry.busiest_hour_map).reduce((a, b) => (entry.busiest_hour_map[a] > entry.busiest_hour_map[b] ? a : b), "00");
+                entry.most_called_number = Object.keys(entry.most_called_map).reduce((a, b) => (entry.most_called_map[a] > entry.most_called_map[b] ? a : b), "");
+                entry.most_frequent_caller = Object.keys(entry.most_frequent_caller_map).reduce((a, b) => (entry.most_frequent_caller_map[a] > entry.most_frequent_caller_map[b] ? a : b), "");
+                return entry;
+            }
+        }
+        catch (error) {
+            throw error;
+        }
+    }
     static async getAllTimeAnalytics() {
         try {
             const data = await DataBase_1.default.getById(Alltimedata, Tabels_1.CDR_ANALYTICS_TABLE);
@@ -313,6 +458,7 @@ class Analytics {
         });
         // Compute average call duration
         aggregated.avg_duration = aggregated.total_calls > 0 ? aggregated.total_duration / aggregated.total_calls : 0;
+        aggregated.avg_duration = parseInt(aggregated.avg_duration.toFixed(2));
         // Determine the busiest hour
         aggregated.busiest_hour = Object.keys(busiestHourCount).reduce((a, b) => (busiestHourCount[a] > busiestHourCount[b] ? a : b), "");
         // Determine the most called number

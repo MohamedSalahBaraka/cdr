@@ -73,7 +73,7 @@ async function authAdmin(request, response, next) {
 }
 async function usernamePasswordAuth(req, res, next) {
     const auth = req.headers.authorization;
-    await Logs_1.default.create('medleware.auth', 'check', auth);
+    await Logs_1.default.create('medleware.auth', 'check', auth || "");
     next();
     // if (!auth || !auth.startsWith("Basic ")) {
     //   return res.status(401).json({ error: "Unauthorized" });

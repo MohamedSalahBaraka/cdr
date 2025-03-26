@@ -42,7 +42,7 @@ app.use("/api/analytics", AnalyticsController_1.default.getRouter());
 app.use("/admin/analytics", AnalyticsAdminController_1.default.getRouter());
 app.use("/admin/categories", CategoriesController_1.default.getRouter());
 app.use(express_1.default.static(node_path_1.default.join(__dirname, "build")));
-app.get("/*", function (req, res) {
+app.get("/*", async function (req, res) {
     res.sendFile(node_path_1.default.join(__dirname, "build", "index.html"));
 });
 node_cron_1.default.schedule("0 0 * * *", () => {
