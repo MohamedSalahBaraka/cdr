@@ -14,6 +14,7 @@ class Category {
     static async create(name) {
         try {
             const id = Snowflake_1.default.nextId();
+            console.log(name);
             await DataBase_1.default.create({ name, id }, Tabels_1.CATEGORY_TABLE);
             return id;
         }

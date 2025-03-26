@@ -15,6 +15,7 @@ class Accounts {
     static async create(code, category_id) {
         try {
             const id = Snowflake_1.default.nextId();
+            console.log("category_id", typeof category_id);
             await DataBase_1.default.create({ code, id, category_id }, Tabels_1.ACCOUNTS_TABLE);
             return id;
         }
@@ -33,7 +34,7 @@ class Accounts {
     }
     static async get() {
         try {
-            const apiusers = await DataBase_1.default.getAll(Tabels_1.ACCOUNTS_TABLE, `${Tabels_1.CATEGORY_TABLE}.name, ${Tabels_1.ACCOUNTS_TABLE}.*`, `JOIN ${Tabels_1.CATEGORY_TABLE} on ${Tabels_1.CATEGORY_TABLE}.id = ${Tabels_1.ACCOUNTS_TABLE}.category_id `);
+            const apiusers = await DataBase_1.default.getAll(Tabels_1.ACCOUNTS_TABLE, `${Tabels_1.CATEGORY_TABLE}.name, ${Tabels_1.ACCOUNTS_TABLE}.*`, `LEFT JOIN ${Tabels_1.CATEGORY_TABLE} on ${Tabels_1.CATEGORY_TABLE}.id = ${Tabels_1.ACCOUNTS_TABLE}.category_id `);
             return apiusers;
         }
         catch (error) {

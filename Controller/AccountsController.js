@@ -10,6 +10,7 @@ class AccountsController {
     static async create(req, res) {
         try {
             const { code, category_id } = req.body;
+            console.log(code, category_id);
             const service = await Accounts_1.default.create(code, category_id);
             res.status(201).json(service);
         }
