@@ -10,8 +10,9 @@ const Logs_1 = __importDefault(require("../Models/Logs"));
 class cdrLogsController {
     static async post(req, res) {
         try {
-            await Logs_1.default.create('controller.post', 'check', req.body || "");
+            await Logs_1.default.create("controller.post", "check", req.body || "");
             const CDRLogdata = { ...req.body, accountcode: req.body.AcctId };
+            delete CDRLogdata.AcctId;
             await CDRLog_1.default.create(CDRLogdata);
             res.status(200).send("Received");
         }

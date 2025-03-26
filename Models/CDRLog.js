@@ -6,7 +6,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const DataBase_1 = __importDefault(require("../DataBase"));
 const Tabels_1 = require("../Constants/Tabels");
 class CDRLog {
-    constructor(accountcode, dst, src, dcontext, clid, channel, dstchannel, lastapp, lastdata, start, answer, end, duration, billsec, disposition, amaflags, uniqueid, userfieldchanned_ext, dstchannel_ext, service, caller_name, recordfiles, dstanswer, session, action_owner, action_type, src_trunk_name, dst_trunk_name) {
+    constructor(accountcode, dst, src, dcontext, clid, channel, dstchannel, lastapp, lastdata, start, answer, end, duration, billsec, disposition, amaflags, uniqueid, userfieldchanned_ext, dstchannel_ext, service, caller_name, recordfiles, dstanswer, session, action_owner, action_type, src_trunk_name, dst_trunk_name, userfield, channel_ext, new_src, sn) {
+        this.userfield = userfield;
+        this.channel_ext = channel_ext;
+        this.new_src = new_src;
+        this.sn = sn;
         this.accountcode = accountcode;
         this.dst = dst;
         this.src = src;
