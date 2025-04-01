@@ -1,0 +1,1 @@
+ALTER TABLE `users` ADD `category_id` VARCHAR(255) NULL AFTER `type`;

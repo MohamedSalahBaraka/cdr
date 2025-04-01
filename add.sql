@@ -1,1 +1,0 @@
-ALTER TABLE `cdr_logs` ADD `userfield` VARCHAR(255) NULL AFTER `dst_trunk_name`, ADD `channel_ext` VARCHAR(255) NULL AFTER `userfield`, ADD `new_src` VARCHAR(255) NULL AFTER `channel_ext`, ADD `sn` VARCHAR(255) NULL AFTER `new_src`;
